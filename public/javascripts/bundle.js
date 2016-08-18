@@ -45,27 +45,35 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	let $ = __webpack_require__(1);
-	let block = $('#block');
-	let scalingButton = $('#scaling-button');
+	const $ = __webpack_require__(1);
+	const block = $('#block');
+	const scalingButton = $('#scaling-button');
 
 	scalingButton.click(() => {
 	  block.animate({ width: '200pt', height: '200pt' }, 2000);
 	  block.animate({ width: '100pt', height: '100pt' }, 2000);
 	});
 
-	let movingButton = $('#moving-button');
+	const movingButton = $('#moving-button');
 
 	movingButton.click(() => {
 	  block.animate({ 'marginLeft': '500px' }, 500);
 	  block.animate({ 'marginLeft': '20px' }, 1000);
 	});
 
-	let loadavg = $('#loadavg');
+	const loadavg = $('#loadavg');
 
-	let socket = __webpack_require__(2)('http://localhost:8000');
+	const socket = __webpack_require__(2)('http://localhost:8000');
 	socket.on('server-status', (data) => {
 	  loadavg.text(data.loadavg.toString());
+	});
+
+	socket.on('connect', () => {
+	  console.log('接続しました');
+	});
+
+	socket.on('disconnect', () => {
+	  console.log('切断しました');
 	});
 
 /***/ },
@@ -73,7 +81,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	 * jQuery JavaScript Library v2.2.1
+	 * jQuery JavaScript Library v2.2.4
 	 * http://jquery.com/
 	 *
 	 * Includes Sizzle.js
@@ -83,7 +91,7 @@
 	 * Released under the MIT license
 	 * http://jquery.org/license
 	 *
-	 * Date: 2016-02-22T19:11Z
+	 * Date: 2016-05-20T17:23Z
 	 */
 
 	(function( global, factory ) {
@@ -139,7 +147,7 @@
 
 
 	var
-		version = "2.2.1",
+		version = "2.2.4",
 
 		// Define a local copy of jQuery
 		jQuery = function( selector, context ) {
@@ -350,6 +358,7 @@
 		},
 
 		isPlainObject: function( obj ) {
+			var key;
 
 			// Not plain objects:
 			// - Any object or value whose internal [[Class]] property is not "[object Object]"
@@ -359,14 +368,18 @@
 				return false;
 			}
 
+			// Not own constructor property must be Object
 			if ( obj.constructor &&
-					!hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
+					!hasOwn.call( obj, "constructor" ) &&
+					!hasOwn.call( obj.constructor.prototype || {}, "isPrototypeOf" ) ) {
 				return false;
 			}
 
-			// If the function hasn't returned already, we're confident that
-			// |obj| is a plain object, created by {} or constructed with new Object
-			return true;
+			// Own properties are enumerated firstly, so to speed up,
+			// if last one is own, then all properties are own
+			for ( key in obj ) {}
+
+			return key === undefined || hasOwn.call( obj, key );
 		},
 
 		isEmptyObject: function( obj ) {
@@ -5075,13 +5088,14 @@
 		isDefaultPrevented: returnFalse,
 		isPropagationStopped: returnFalse,
 		isImmediatePropagationStopped: returnFalse,
+		isSimulated: false,
 
 		preventDefault: function() {
 			var e = this.originalEvent;
 
 			this.isDefaultPrevented = returnTrue;
 
-			if ( e ) {
+			if ( e && !this.isSimulated ) {
 				e.preventDefault();
 			}
 		},
@@ -5090,7 +5104,7 @@
 
 			this.isPropagationStopped = returnTrue;
 
-			if ( e ) {
+			if ( e && !this.isSimulated ) {
 				e.stopPropagation();
 			}
 		},
@@ -5099,7 +5113,7 @@
 
 			this.isImmediatePropagationStopped = returnTrue;
 
-			if ( e ) {
+			if ( e && !this.isSimulated ) {
 				e.stopImmediatePropagation();
 			}
 
@@ -6029,19 +6043,6 @@
 			val = name === "width" ? elem.offsetWidth : elem.offsetHeight,
 			styles = getStyles( elem ),
 			isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
-
-		// Support: IE11 only
-		// In IE 11 fullscreen elements inside of an iframe have
-		// 100x too small dimensions (gh-1764).
-		if ( document.msFullscreenElement && window.top !== window ) {
-
-			// Support: IE11 only
-			// Running getBoundingClientRect on a disconnected node
-			// in IE throws an error.
-			if ( elem.getClientRects().length ) {
-				val = Math.round( elem.getBoundingClientRect()[ name ] * 100 );
-			}
-		}
 
 		// Some non-html elements return undefined for offsetWidth, so check for null/undefined
 		// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
@@ -7399,6 +7400,12 @@
 		}
 	} );
 
+	// Support: IE <=11 only
+	// Accessing the selectedIndex property
+	// forces the browser to respect setting selected
+	// on the option
+	// The getter ensures a default option is selected
+	// when in an optgroup
 	if ( !support.optSelected ) {
 		jQuery.propHooks.selected = {
 			get: function( elem ) {
@@ -7407,6 +7414,16 @@
 					parent.parentNode.selectedIndex;
 				}
 				return null;
+			},
+			set: function( elem ) {
+				var parent = elem.parentNode;
+				if ( parent ) {
+					parent.selectedIndex;
+
+					if ( parent.parentNode ) {
+						parent.parentNode.selectedIndex;
+					}
+				}
 			}
 		};
 	}
@@ -7601,7 +7618,8 @@
 
 
 
-	var rreturn = /\r/g;
+	var rreturn = /\r/g,
+		rspaces = /[\x20\t\r\n\f]+/g;
 
 	jQuery.fn.extend( {
 		val: function( value ) {
@@ -7677,9 +7695,15 @@
 			option: {
 				get: function( elem ) {
 
-					// Support: IE<11
-					// option.value not trimmed (#14858)
-					return jQuery.trim( elem.value );
+					var val = jQuery.find.attr( elem, "value" );
+					return val != null ?
+						val :
+
+						// Support: IE10-11+
+						// option.text throws exceptions (#14686, #14858)
+						// Strip and collapse whitespace
+						// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
+						jQuery.trim( jQuery.text( elem ) ).replace( rspaces, " " );
 				}
 			},
 			select: {
@@ -7732,7 +7756,7 @@
 					while ( i-- ) {
 						option = options[ i ];
 						if ( option.selected =
-								jQuery.inArray( jQuery.valHooks.option.get( option ), values ) > -1
+							jQuery.inArray( jQuery.valHooks.option.get( option ), values ) > -1
 						) {
 							optionSet = true;
 						}
@@ -7910,6 +7934,7 @@
 		},
 
 		// Piggyback on a donor event to simulate a different one
+		// Used only for `focus(in | out)` events
 		simulate: function( type, elem, event ) {
 			var e = jQuery.extend(
 				new jQuery.Event(),
@@ -7917,27 +7942,10 @@
 				{
 					type: type,
 					isSimulated: true
-
-					// Previously, `originalEvent: {}` was set here, so stopPropagation call
-					// would not be triggered on donor event, since in our own
-					// jQuery.event.stopPropagation function we had a check for existence of
-					// originalEvent.stopPropagation method, so, consequently it would be a noop.
-					//
-					// But now, this "simulate" function is used only for events
-					// for which stopPropagation() is noop, so there is no need for that anymore.
-					//
-					// For the 1.x branch though, guard for "click" and "submit"
-					// events is still used, but was moved to jQuery.event.stopPropagation function
-					// because `originalEvent` should point to the original event for the constancy
-					// with other events and for more focused logic
 				}
 			);
 
 			jQuery.event.trigger( e, null, elem );
-
-			if ( e.isDefaultPrevented() ) {
-				event.preventDefault();
-			}
 		}
 
 	} );
@@ -9427,18 +9435,6 @@
 
 
 
-	// Support: Safari 8+
-	// In Safari 8 documents created via document.implementation.createHTMLDocument
-	// collapse sibling forms: the second one becomes a child of the first one.
-	// Because of that, this security measure has to be disabled in Safari 8.
-	// https://bugs.webkit.org/show_bug.cgi?id=137337
-	support.createHTMLDocument = ( function() {
-		var body = document.implementation.createHTMLDocument( "" ).body;
-		body.innerHTML = "<form></form><form></form>";
-		return body.childNodes.length === 2;
-	} )();
-
-
 	// Argument "data" should be string of html
 	// context (optional): If specified, the fragment will be created in this context,
 	// defaults to document
@@ -9451,12 +9447,7 @@
 			keepScripts = context;
 			context = false;
 		}
-
-		// Stop scripts or inline event handlers from being executed immediately
-		// by using document.implementation
-		context = context || ( support.createHTMLDocument ?
-			document.implementation.createHTMLDocument( "" ) :
-			document );
+		context = context || document;
 
 		var parsed = rsingleTag.exec( data ),
 			scripts = !keepScripts && [];
@@ -9538,7 +9529,7 @@
 			// If it fails, this function gets "jqXHR", "status", "error"
 			} ).always( callback && function( jqXHR, status ) {
 				self.each( function() {
-					callback.apply( self, response || [ jqXHR.responseText, status, jqXHR ] );
+					callback.apply( this, response || [ jqXHR.responseText, status, jqXHR ] );
 				} );
 			} );
 		}
@@ -10000,7 +9991,7 @@
 	 */
 
 	exports.Manager = __webpack_require__(16);
-	exports.Socket = __webpack_require__(44);
+	exports.Socket = __webpack_require__(42);
 
 
 /***/ },
@@ -12335,14 +12326,14 @@
 	 */
 
 	var eio = __webpack_require__(17);
-	var Socket = __webpack_require__(44);
-	var Emitter = __webpack_require__(45);
+	var Socket = __webpack_require__(42);
+	var Emitter = __webpack_require__(43);
 	var parser = __webpack_require__(8);
-	var on = __webpack_require__(47);
-	var bind = __webpack_require__(48);
+	var on = __webpack_require__(45);
+	var bind = __webpack_require__(46);
 	var debug = __webpack_require__(5)('socket.io-client:manager');
-	var indexOf = __webpack_require__(42);
-	var Backoff = __webpack_require__(51);
+	var indexOf = __webpack_require__(40);
+	var Backoff = __webpack_require__(48);
 
 	/**
 	 * IE6+ hasOwnProperty
@@ -12921,13 +12912,13 @@
 	 */
 
 	var transports = __webpack_require__(20);
-	var Emitter = __webpack_require__(35);
+	var Emitter = __webpack_require__(13);
 	var debug = __webpack_require__(5)('engine.io-client:socket');
-	var index = __webpack_require__(42);
+	var index = __webpack_require__(40);
 	var parser = __webpack_require__(26);
 	var parseuri = __webpack_require__(4);
-	var parsejson = __webpack_require__(43);
-	var parseqs = __webpack_require__(36);
+	var parsejson = __webpack_require__(41);
+	var parseqs = __webpack_require__(34);
 
 	/**
 	 * Module exports.
@@ -13016,7 +13007,7 @@
 	  this.cert = opts.cert || null;
 	  this.ca = opts.ca || null;
 	  this.ciphers = opts.ciphers || null;
-	  this.rejectUnauthorized = opts.rejectUnauthorized === undefined ? null : opts.rejectUnauthorized;
+	  this.rejectUnauthorized = opts.rejectUnauthorized === undefined ? true : opts.rejectUnauthorized;
 
 	  // other options for Node.js client
 	  var freeGlobal = typeof global == 'object' && global;
@@ -13657,8 +13648,8 @@
 
 	var XMLHttpRequest = __webpack_require__(21);
 	var XHR = __webpack_require__(23);
-	var JSONP = __webpack_require__(39);
-	var websocket = __webpack_require__(40);
+	var JSONP = __webpack_require__(37);
+	var websocket = __webpack_require__(38);
 
 	/**
 	 * Export transports.
@@ -13782,8 +13773,8 @@
 
 	var XMLHttpRequest = __webpack_require__(21);
 	var Polling = __webpack_require__(24);
-	var Emitter = __webpack_require__(35);
-	var inherit = __webpack_require__(37);
+	var Emitter = __webpack_require__(13);
+	var inherit = __webpack_require__(35);
 	var debug = __webpack_require__(5)('engine.io-client:polling-xhr');
 
 	/**
@@ -14200,10 +14191,10 @@
 	 */
 
 	var Transport = __webpack_require__(25);
-	var parseqs = __webpack_require__(36);
+	var parseqs = __webpack_require__(34);
 	var parser = __webpack_require__(26);
-	var inherit = __webpack_require__(37);
-	var yeast = __webpack_require__(38);
+	var inherit = __webpack_require__(35);
+	var yeast = __webpack_require__(36);
 	var debug = __webpack_require__(5)('engine.io-client:polling');
 
 	/**
@@ -14453,7 +14444,7 @@
 	 */
 
 	var parser = __webpack_require__(26);
-	var Emitter = __webpack_require__(35);
+	var Emitter = __webpack_require__(13);
 
 	/**
 	 * Module exports.
@@ -14615,10 +14606,10 @@
 
 	var keys = __webpack_require__(27);
 	var hasBinary = __webpack_require__(28);
-	var sliceBuffer = __webpack_require__(30);
-	var base64encoder = __webpack_require__(31);
-	var after = __webpack_require__(32);
-	var utf8 = __webpack_require__(33);
+	var sliceBuffer = __webpack_require__(29);
+	var base64encoder = __webpack_require__(30);
+	var after = __webpack_require__(31);
+	var utf8 = __webpack_require__(32);
 
 	/**
 	 * Check if we are running an android browser. That requires us to use
@@ -14675,7 +14666,7 @@
 	 * Create a blob api even for blob builder when vendor prefixes exist
 	 */
 
-	var Blob = __webpack_require__(34);
+	var Blob = __webpack_require__(33);
 
 	/**
 	 * Encodes a packet.
@@ -15240,7 +15231,7 @@
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(29);
+	var isArray = __webpack_require__(12);
 
 	/**
 	 * Module exports.
@@ -15300,15 +15291,6 @@
 /* 29 */
 /***/ function(module, exports) {
 
-	module.exports = Array.isArray || function (arr) {
-	  return Object.prototype.toString.call(arr) == '[object Array]';
-	};
-
-
-/***/ },
-/* 30 */
-/***/ function(module, exports) {
-
 	/**
 	 * An abstraction for slicing an arraybuffer even when
 	 * ArrayBuffer.prototype.slice is not supported
@@ -15341,7 +15323,7 @@
 
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/*
@@ -15406,7 +15388,7 @@
 
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports) {
 
 	module.exports = after
@@ -15440,7 +15422,7 @@
 
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/utf8js v2.0.0 by @mathias */
@@ -15689,7 +15671,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module), (function() { return this; }())))
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -15792,177 +15774,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 35 */
-/***/ function(module, exports) {
-
-	
-	/**
-	 * Expose `Emitter`.
-	 */
-
-	module.exports = Emitter;
-
-	/**
-	 * Initialize a new `Emitter`.
-	 *
-	 * @api public
-	 */
-
-	function Emitter(obj) {
-	  if (obj) return mixin(obj);
-	};
-
-	/**
-	 * Mixin the emitter properties.
-	 *
-	 * @param {Object} obj
-	 * @return {Object}
-	 * @api private
-	 */
-
-	function mixin(obj) {
-	  for (var key in Emitter.prototype) {
-	    obj[key] = Emitter.prototype[key];
-	  }
-	  return obj;
-	}
-
-	/**
-	 * Listen on the given `event` with `fn`.
-	 *
-	 * @param {String} event
-	 * @param {Function} fn
-	 * @return {Emitter}
-	 * @api public
-	 */
-
-	Emitter.prototype.on =
-	Emitter.prototype.addEventListener = function(event, fn){
-	  this._callbacks = this._callbacks || {};
-	  (this._callbacks[event] = this._callbacks[event] || [])
-	    .push(fn);
-	  return this;
-	};
-
-	/**
-	 * Adds an `event` listener that will be invoked a single
-	 * time then automatically removed.
-	 *
-	 * @param {String} event
-	 * @param {Function} fn
-	 * @return {Emitter}
-	 * @api public
-	 */
-
-	Emitter.prototype.once = function(event, fn){
-	  var self = this;
-	  this._callbacks = this._callbacks || {};
-
-	  function on() {
-	    self.off(event, on);
-	    fn.apply(this, arguments);
-	  }
-
-	  on.fn = fn;
-	  this.on(event, on);
-	  return this;
-	};
-
-	/**
-	 * Remove the given callback for `event` or all
-	 * registered callbacks.
-	 *
-	 * @param {String} event
-	 * @param {Function} fn
-	 * @return {Emitter}
-	 * @api public
-	 */
-
-	Emitter.prototype.off =
-	Emitter.prototype.removeListener =
-	Emitter.prototype.removeAllListeners =
-	Emitter.prototype.removeEventListener = function(event, fn){
-	  this._callbacks = this._callbacks || {};
-
-	  // all
-	  if (0 == arguments.length) {
-	    this._callbacks = {};
-	    return this;
-	  }
-
-	  // specific event
-	  var callbacks = this._callbacks[event];
-	  if (!callbacks) return this;
-
-	  // remove all handlers
-	  if (1 == arguments.length) {
-	    delete this._callbacks[event];
-	    return this;
-	  }
-
-	  // remove specific handler
-	  var cb;
-	  for (var i = 0; i < callbacks.length; i++) {
-	    cb = callbacks[i];
-	    if (cb === fn || cb.fn === fn) {
-	      callbacks.splice(i, 1);
-	      break;
-	    }
-	  }
-	  return this;
-	};
-
-	/**
-	 * Emit `event` with the given args.
-	 *
-	 * @param {String} event
-	 * @param {Mixed} ...
-	 * @return {Emitter}
-	 */
-
-	Emitter.prototype.emit = function(event){
-	  this._callbacks = this._callbacks || {};
-	  var args = [].slice.call(arguments, 1)
-	    , callbacks = this._callbacks[event];
-
-	  if (callbacks) {
-	    callbacks = callbacks.slice(0);
-	    for (var i = 0, len = callbacks.length; i < len; ++i) {
-	      callbacks[i].apply(this, args);
-	    }
-	  }
-
-	  return this;
-	};
-
-	/**
-	 * Return array of callbacks for `event`.
-	 *
-	 * @param {String} event
-	 * @return {Array}
-	 * @api public
-	 */
-
-	Emitter.prototype.listeners = function(event){
-	  this._callbacks = this._callbacks || {};
-	  return this._callbacks[event] || [];
-	};
-
-	/**
-	 * Check if this emitter has `event` handlers.
-	 *
-	 * @param {String} event
-	 * @return {Boolean}
-	 * @api public
-	 */
-
-	Emitter.prototype.hasListeners = function(event){
-	  return !! this.listeners(event).length;
-	};
-
-
-/***/ },
-/* 36 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/**
@@ -16005,7 +15817,7 @@
 
 
 /***/ },
-/* 37 */
+/* 35 */
 /***/ function(module, exports) {
 
 	
@@ -16017,7 +15829,7 @@
 	};
 
 /***/ },
-/* 38 */
+/* 36 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -16091,7 +15903,7 @@
 
 
 /***/ },
-/* 39 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -16100,7 +15912,7 @@
 	 */
 
 	var Polling = __webpack_require__(24);
-	var inherit = __webpack_require__(37);
+	var inherit = __webpack_require__(35);
 
 	/**
 	 * Module exports.
@@ -16336,7 +16148,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 40 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -16345,9 +16157,9 @@
 
 	var Transport = __webpack_require__(25);
 	var parser = __webpack_require__(26);
-	var parseqs = __webpack_require__(36);
-	var inherit = __webpack_require__(37);
-	var yeast = __webpack_require__(38);
+	var parseqs = __webpack_require__(34);
+	var inherit = __webpack_require__(35);
+	var yeast = __webpack_require__(36);
 	var debug = __webpack_require__(5)('engine.io-client:websocket');
 	var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 
@@ -16360,7 +16172,7 @@
 	var WebSocket = BrowserWebSocket;
 	if (!WebSocket && typeof window === 'undefined') {
 	  try {
-	    WebSocket = __webpack_require__(41);
+	    WebSocket = __webpack_require__(39);
 	  } catch (e) { }
 	}
 
@@ -16631,13 +16443,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 41 */
+/* 39 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 42 */
+/* 40 */
 /***/ function(module, exports) {
 
 	
@@ -16652,7 +16464,7 @@
 	};
 
 /***/ },
-/* 43 */
+/* 41 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -16690,7 +16502,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 44 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -16699,12 +16511,12 @@
 	 */
 
 	var parser = __webpack_require__(8);
-	var Emitter = __webpack_require__(45);
-	var toArray = __webpack_require__(46);
-	var on = __webpack_require__(47);
-	var bind = __webpack_require__(48);
+	var Emitter = __webpack_require__(43);
+	var toArray = __webpack_require__(44);
+	var on = __webpack_require__(45);
+	var bind = __webpack_require__(46);
 	var debug = __webpack_require__(5)('socket.io-client:socket');
-	var hasBin = __webpack_require__(49);
+	var hasBin = __webpack_require__(47);
 
 	/**
 	 * Module exports.
@@ -17108,7 +16920,7 @@
 
 
 /***/ },
-/* 45 */
+/* 43 */
 /***/ function(module, exports) {
 
 	
@@ -17275,7 +17087,7 @@
 
 
 /***/ },
-/* 46 */
+/* 44 */
 /***/ function(module, exports) {
 
 	module.exports = toArray
@@ -17294,7 +17106,7 @@
 
 
 /***/ },
-/* 47 */
+/* 45 */
 /***/ function(module, exports) {
 
 	
@@ -17324,7 +17136,7 @@
 
 
 /***/ },
-/* 48 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/**
@@ -17353,7 +17165,7 @@
 
 
 /***/ },
-/* 49 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -17361,7 +17173,7 @@
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(50);
+	var isArray = __webpack_require__(12);
 
 	/**
 	 * Module exports.
@@ -17419,16 +17231,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 50 */
-/***/ function(module, exports) {
-
-	module.exports = Array.isArray || function (arr) {
-	  return Object.prototype.toString.call(arr) == '[object Array]';
-	};
-
-
-/***/ },
-/* 51 */
+/* 48 */
 /***/ function(module, exports) {
 
 	
