@@ -15,9 +15,17 @@ movingButton.click(() => {
   block.animate({ 'marginLeft': '20px' }, 1000);
 });
 
-const loadavg = $('#loadavg');
+const loadavg = $('#loadavg'); // index.jade にあるpタグのid（この場所にappendChild的なことをしている）
 
 const socket = require('socket.io-client')('http://localhost:8000');
 socket.on('server-status', (data) => {
-  loadavg.text(data.loadavg.toString());
+  loadavg.text(data.loadavg.toString() + ', ' + data.uptime); // data.loadavg は配列なのでtoString()で文字列にしているが、そのままでも表示のされ方は同じ
+});
+
+socket.on('connect', () => {
+  console.log('接続しました。');
+});
+
+socket.on('disconnect', () => {
+  console.log('切断しました。');
 });
