@@ -93,7 +93,9 @@ var io = require('socket.io')(server);
 var os = require('os');
 
 function emitServerStatus(socket) {
-  socket.emit('server-status', { loadavg: os.loadavg() });
+  socket.emit('server-status', // ここで server-status を発行（定義）する
+    { loadavg: os.loadavg(), uptime: os.uptime() } // os.uptime() → 秒単位の時間で実行されているオペレーティングシステムを返す。
+  );
   console.log('server-status event emitted.');
 }
 
