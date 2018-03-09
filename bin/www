@@ -89,14 +89,35 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
+// 'io'モジュール読み込み
+// サーバー側でWebSocketを利用するのに必要
+// var server = http.createServer(app);
+// を↑の方で実行してserverを作成している
 var io = require('socket.io')(server);
+// 'OS'モジュール読み込み
+// ロードアベレージを取得するために必要
 var os = require('os');
 
+/**
+ * ロードアベレージをクライアント側へ発信する関数
+ * emit : 発する
+ * @param socket 
+ */
 function emitServerStatus(socket) {
+  // ソケットを経由して
+  // 'server-status'という名前のイベントと
+  // ロードアベレージのデータをクライアントに発信する
+  // クライアント側で受信するとクライアント側で
+  // 'server-status'イベントが発生する
+  // サーバー側からデータを発信しているのでプッシュ通信
   socket.emit('server-status', { loadavg: os.loadavg() });
   console.log('server-status event emitted.');
 }
 
+// 接続が確立した時(onイベントが発生する)に
+// setInterval関数を実行する
 io.on('connection', function (socket) {
+  // 10ミリ秒ごとにemitServerStatus()関数を実行する
+  // 第三引数が第一引数の引数として与えられているのかな？
   setInterval(emitServerStatus, 10, socket);
 });
