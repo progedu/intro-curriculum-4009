@@ -17,7 +17,14 @@ movingButton.click(() => {
 
 const loadavg = $('#loadavg');
 
+
 const socket = require('socket.io-client')('http://localhost:8000');
 socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.toString());
+});
+socket.on('connect', () => {
+  console.log('接続しました');
+});
+socket.on('disconnect', () => {
+  console.log('切断しました');
 });
