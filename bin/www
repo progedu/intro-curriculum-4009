@@ -94,7 +94,7 @@ var os = require('os');
 
 function emitServerStatus(socket) {
   socket.emit('server-status', { loadavg: os.loadavg() });
-  console.log('server-status event emitted.');
+//  console.log('server-status event emitted.');
 }
 
 io.on('connection', function (socket) {
