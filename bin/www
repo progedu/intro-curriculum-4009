@@ -97,6 +97,9 @@ function emitServerStatus(socket) {
   console.log('server-status event emitted.');
 }
 
+
+
 io.on('connection', function (socket) {
   setInterval(emitServerStatus, 10, socket);
 });
+
