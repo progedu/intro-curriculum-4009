@@ -269,13 +269,13 @@ Emitter.prototype.hasListeners = function(event){
 
 var keys = __webpack_require__(36);
 var hasBinary = __webpack_require__(18);
-var sliceBuffer = __webpack_require__(42);
-var after = __webpack_require__(43);
-var utf8 = __webpack_require__(44);
+var sliceBuffer = __webpack_require__(41);
+var after = __webpack_require__(42);
+var utf8 = __webpack_require__(43);
 
 var base64encoder;
 if (global && global.ArrayBuffer) {
-  base64encoder = __webpack_require__(46);
+  base64encoder = __webpack_require__(45);
 }
 
 /**
@@ -333,7 +333,7 @@ var err = { type: 'error', data: 'parser error' };
  * Create a blob api even for blob builder when vendor prefixes exist
  */
 
-var Blob = __webpack_require__(47);
+var Blob = __webpack_require__(46);
 
 /**
  * Encodes a packet.
@@ -1139,7 +1139,7 @@ module.exports = function(a, b){
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(48);
+exports = module.exports = __webpack_require__(47);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -1691,7 +1691,7 @@ function plural(ms, n, name) {
 var debug = __webpack_require__(29)('socket.io-parser');
 var Emitter = __webpack_require__(1);
 var binary = __webpack_require__(31);
-var isArray = __webpack_require__(13);
+var isArray = __webpack_require__(10);
 var isBuf = __webpack_require__(14);
 
 /**
@@ -2104,6 +2104,17 @@ function error(msg) {
 
 /***/ }),
 /* 10 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// browser shim for xmlhttprequest module
@@ -2147,7 +2158,7 @@ module.exports = function (opts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -2310,7 +2321,7 @@ Transport.prototype.onClose = function () {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /**
@@ -2351,17 +2362,6 @@ module.exports = function parseuri(str) {
     }
 
     return uri;
-};
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
 };
 
 
@@ -2413,7 +2413,7 @@ var on = __webpack_require__(22);
 var bind = __webpack_require__(23);
 var debug = __webpack_require__(3)('socket.io-client:manager');
 var indexOf = __webpack_require__(20);
-var Backoff = __webpack_require__(53);
+var Backoff = __webpack_require__(52);
 
 /**
  * IE6+ hasOwnProperty
@@ -2983,10 +2983,10 @@ Manager.prototype.onreconnect = function () {
  * Module dependencies
  */
 
-var XMLHttpRequest = __webpack_require__(10);
+var XMLHttpRequest = __webpack_require__(11);
 var XHR = __webpack_require__(35);
-var JSONP = __webpack_require__(49);
-var websocket = __webpack_require__(50);
+var JSONP = __webpack_require__(48);
+var websocket = __webpack_require__(49);
 
 /**
  * Export transports.
@@ -3043,7 +3043,7 @@ function polling (opts) {
  * Module dependencies.
  */
 
-var Transport = __webpack_require__(11);
+var Transport = __webpack_require__(12);
 var parseqs = __webpack_require__(4);
 var parser = __webpack_require__(2);
 var inherit = __webpack_require__(5);
@@ -3061,7 +3061,7 @@ module.exports = Polling;
  */
 
 var hasXHR2 = (function () {
-  var XMLHttpRequest = __webpack_require__(10);
+  var XMLHttpRequest = __webpack_require__(11);
   var xhr = new XMLHttpRequest({ xdomain: false });
   return null != xhr.responseType;
 })();
@@ -3296,7 +3296,7 @@ Polling.prototype.uri = function () {
  * Module requirements.
  */
 
-var isArray = __webpack_require__(41);
+var isArray = __webpack_require__(10);
 
 var toString = Object.prototype.toString;
 var withNativeBlob = typeof Blob === 'function' ||
@@ -3458,7 +3458,7 @@ module.exports = function(arr, obj){
 
 var parser = __webpack_require__(9);
 var Emitter = __webpack_require__(1);
-var toArray = __webpack_require__(52);
+var toArray = __webpack_require__(51);
 var on = __webpack_require__(22);
 var bind = __webpack_require__(23);
 var debug = __webpack_require__(3)('socket.io-client:socket');
@@ -3987,6 +3987,13 @@ var loadavg = (0, _jquery2.default)('#loadavg');
 var socket = (0, _socket2.default)('http://localhost:8000');
 socket.on('server-status', function (data) {
   loadavg.text(data.loadavg.toString());
+});
+
+socket.on('connect', function () {
+  console.log('接続しました。');
+});
+socket.on('disconnect', function () {
+  console.log('切断しました。');
 });
 
 /***/ }),
@@ -14469,7 +14476,7 @@ exports.Socket = __webpack_require__(21);
  * Module dependencies.
  */
 
-var parseuri = __webpack_require__(12);
+var parseuri = __webpack_require__(13);
 var debug = __webpack_require__(3)('socket.io-client:url');
 
 /**
@@ -15216,7 +15223,7 @@ function coerce(val) {
  * Module requirements
  */
 
-var isArray = __webpack_require__(13);
+var isArray = __webpack_require__(10);
 var isBuf = __webpack_require__(14);
 var toString = Object.prototype.toString;
 var withNativeBlob = typeof global.Blob === 'function' || toString.call(global.Blob) === '[object BlobConstructor]';
@@ -15383,7 +15390,7 @@ var Emitter = __webpack_require__(1);
 var debug = __webpack_require__(6)('engine.io-client:socket');
 var index = __webpack_require__(20);
 var parser = __webpack_require__(2);
-var parseuri = __webpack_require__(12);
+var parseuri = __webpack_require__(13);
 var parseqs = __webpack_require__(4);
 
 /**
@@ -15517,7 +15524,7 @@ Socket.protocol = parser.protocol; // this is an int
  */
 
 Socket.Socket = Socket;
-Socket.Transport = __webpack_require__(11);
+Socket.Transport = __webpack_require__(12);
 Socket.transports = __webpack_require__(16);
 Socket.parser = __webpack_require__(2);
 
@@ -16151,7 +16158,7 @@ try {
  * Module requirements.
  */
 
-var XMLHttpRequest = __webpack_require__(10);
+var XMLHttpRequest = __webpack_require__(11);
 var Polling = __webpack_require__(17);
 var Emitter = __webpack_require__(1);
 var inherit = __webpack_require__(5);
@@ -18647,17 +18654,6 @@ module.exports = Array.isArray || function (arr) {
 /* 41 */
 /***/ (function(module, exports) {
 
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports) {
-
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -18690,7 +18686,7 @@ module.exports = function(arraybuffer, start, end) {
 
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports) {
 
 module.exports = after
@@ -18724,7 +18720,7 @@ function noop() {}
 
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/utf8js v2.1.2 by @mathias */
@@ -18982,10 +18978,10 @@ function noop() {}
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)(module), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(44)(module), __webpack_require__(0)))
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -19013,7 +19009,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports) {
 
 /*
@@ -19086,7 +19082,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -19189,7 +19185,7 @@ module.exports = (function() {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -19420,7 +19416,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -19658,14 +19654,14 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * Module dependencies.
  */
 
-var Transport = __webpack_require__(11);
+var Transport = __webpack_require__(12);
 var parser = __webpack_require__(2);
 var parseqs = __webpack_require__(4);
 var inherit = __webpack_require__(5);
@@ -19675,7 +19671,7 @@ var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 var NodeWebSocket;
 if (typeof window === 'undefined') {
   try {
-    NodeWebSocket = __webpack_require__(51);
+    NodeWebSocket = __webpack_require__(50);
   } catch (e) { }
 }
 
@@ -19951,13 +19947,13 @@ WS.prototype.check = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports) {
 
 module.exports = toArray
@@ -19976,7 +19972,7 @@ function toArray(list, index) {
 
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports) {
 
 
