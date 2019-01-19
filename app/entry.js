@@ -22,3 +22,15 @@ const socket = io('http://localhost:8000');
 socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.toString());
 });
+
+// connectイベントハンドラ(WebSocket通信の接続時の処理)の定義
+socket.on('connect', () => {
+  // ブラウザコンソールにログを出力する
+  console.log('接続しました');
+});
+
+// disconnectイベントハンドラ(WebSocket通信の切断時の処理)の定義
+socket.on('disconnect', () => {
+  // ブラウザコンソールにログを出力する
+  console.log('切断しました');
+});
