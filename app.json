@@ -1,0 +1,8 @@
+{
+  "name": "socket_io_test",
+  "description": "socket io test",
+  "repository": "https://github.com/progedu/intro-curriculum-4009",
+  "logo": "",
+  "keywords": ["node"],
+  "image": "heroku/nodejs"
+}

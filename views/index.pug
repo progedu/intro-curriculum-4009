@@ -12,6 +12,20 @@ block content
   button#scaling-button 拡大縮小
   button#moving-button 移動
   h1 サーバーステータス
+  p#connection
+  button(style="WIDTH: 200px; HEIGHT: 40px; font-size:24px")#disconnect 切断
+
   h3 ロードアベレージ
   p#loadavg
+  p
+  p 現在の接続ユーザー数：
+    span(style="font-size: 48pt;")#numberOfCurrentUser
+  p#id
+  
+  h3 秘密の匿名チャットルーム
+  form(method="post" action="/posts" autocomplete="off")#chat_form
+    input(type="text" name="" autocomplete="off")#message
+    button(type="submit") 投稿
+
+  p(style="font-size: 24pt;")#chat_area
   script(src="/javascripts/bundle.js")
