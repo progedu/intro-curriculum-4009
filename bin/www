@@ -91,12 +91,35 @@ function onListening() {
 
 var io = require('socket.io')(server);
 var os = require('os');
+let numberOfCurrentUser = 0;//接続ユーザー数
 
-function emitServerStatus(socket) {
+function emitServerStatus(socket) { //Socket.idとロードアベレージを送信
   socket.emit('server-status', { loadavg: os.loadavg() });
-  console.log('server-status event emitted.');
+  console.log('TO:' + socket.id + ' server-status event emitted.' + os.loadavg());
 }
 
+
+//ユーザーが接続した時の処理
 io.on('connection', function (socket) {
-  setInterval(emitServerStatus, 10, socket);
+  const timerId = setInterval(emitServerStatus, 1000, socket);//せわしないので1秒にした
+  numberOfCurrentUser++; //ユーザー数のカウントを増やす。numberOfCurrentUserはグローバル変数なので全ユーザーで共有
+  io.emit('numberOfCurrentUser', numberOfCurrentUser);//人数の変化を全員に送信
+  socket.emit('socket_id', socket.id);//IDはアクセスした本人だけに送信
+  console.log('connected socket.id:' + socket.id);
+
+  //切断時の処理
+  socket.on('disconnect', function () {
+    numberOfCurrentUser--; //ユーザー数のカウントを減らす
+    io.emit('numberOfCurrentUser', numberOfCurrentUser);//人数の変化を全員に送信
+    console.log('disconnected socket.id:' + socket.id);
+    clearInterval(timerId);//タイマーを止める
+  });
+
+  //チャットメッセージが届いた時の処理
+  socket.on('chat_post', function (msg) {
+    msg =msg.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,''); //XSS対策。HTMLタグを除去
+    io.emit('chat_broadcast', msg); //届いたメッセージを全員に送信
+    console.log('received message', msg);
+  });
+
 });
