@@ -97,39 +97,47 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var block = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#block');
-var scalingButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#scaling-button');
-scalingButton.click(function () {
-  block.animate({
-    width: '200pt',
-    height: '200pt'
-  }, 2000);
-  block.animate({
-    width: '100pt',
-    height: '100pt'
-  }, 2000);
-});
-var movingButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#moving-button');
-movingButton.click(function () {
-  block.animate({
-    'marginLeft': '500px'
-  }, 500);
-  block.animate({
-    'marginLeft': '20px'
-  }, 1000);
-});
 var loadavg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#loadavg');
 
-var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_1___default()('http://localhost:8000');
+var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_1___default()('http://localhost:8000'); //$(document).ready(function () {
+
 socket.on('server-status', function (data) {
-  loadavg.text(data.loadavg.toString());
+  data.loadavg.forEach(function (value, index, array) {
+    array[index] = value.toFixed(5);
+    var values = [[[0, array[0]]], [[1, array[1]]], [[2, array[2]]]];
+    var years = [[0, "直近１分<br>" + array[0]], [1, "直近５分<br>" + array[1]], [2, "直近１５分<br>" + array[2]]];
+    Flotr.draw(jquery__WEBPACK_IMPORTED_MODULE_0___default()('#chart')[0], values, {
+      title: "ロードアベレージ",
+      colors: ['#ff0000', '#1E90FF', '#0000ff'],
+      bars: {
+        show: true,
+        barWidth: 0.5,
+        shadowSize: 0,
+        fillOpacity: 1,
+        lineWidth: 0
+      },
+      yaxis: {
+        max: 0.4,
+        min: 0.001,
+        tickDecimals: 5
+      },
+      xaxis: {
+        ticks: years
+      },
+      grid: {
+        horizontalLines: false,
+        verticalLines: false
+      }
+    });
+  }); //forEachここまで
+  //loadavg.text(data.loadavg.join(' : '));
 });
 socket.on('connect', function () {
-  console.log('クライアント側でこういうことできるのか〜すごい！');
+  console.log('WebSocketによるプッシュ通信接続');
 });
 socket.on('disconnect', function () {
-  console.log('頭混乱していたけど、何となくわかってきた！');
-});
+  console.log('このコメントのあとは、エラーがでる！？');
+}); //  });
 
 /***/ }),
 /* 1 */

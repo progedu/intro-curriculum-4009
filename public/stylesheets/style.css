@@ -7,9 +7,12 @@ a {
   color: #00B7FF;
 }
 
-.block {
-  width: 100pt;
-  height: 100pt;
+#chart {
+  width: 600px;
+  height: 400px;
+  /*
   margin: 20pt;
   background-color: chocolate;
+  */
 }
+

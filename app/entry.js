@@ -1,31 +1,56 @@
 'use strict';
 import $ from 'jquery';
-const block = $('#block');
-const scalingButton = $('#scaling-button');
-
-scalingButton.click(() => {
-  block.animate({ width: '200pt', height: '200pt' }, 2000);
-  block.animate({ width: '100pt', height: '100pt' }, 2000);
-});
-
-const movingButton = $('#moving-button');
-
-movingButton.click(() => {
-  block.animate({ 'marginLeft': '500px' }, 500);
-  block.animate({ 'marginLeft': '20px' }, 1000);
-});
-
 const loadavg = $('#loadavg');
-
 import io from 'socket.io-client';
 const socket = io('http://localhost:8000');
-socket.on('server-status', (data) => {
-  loadavg.text(data.loadavg.toString());
-});
 
-socket.on('connect', () => {
-  console.log('クライアント側でこういうことできるのか〜すごい！');
-});
-socket.on('disconnect', () => {
-  console.log('このコメントのあとは、エラーがでる！？');
-});
+//$(document).ready(function () {
+
+  socket.on('server-status', (data) => {
+    data.loadavg.forEach((value, index, array) => {
+      array[index] = value.toFixed(5);
+      let values = [ [ [0,(array[0])] ],[ [1,(array[1])] ],[ [2,(array[2])] ] ];
+      let years = [
+          [0, "直近１分<br>" + array[0]],
+          [1, "直近５分<br>" + array[1]],
+          [2, "直近１５分<br>" + array[2]],
+      ];
+      Flotr.draw($('#chart')[0],values, {
+        title: "ロードアベレージ",
+        colors: ['#ff0000','#1E90FF','#0000ff'],
+          bars: {
+              show: true,
+              barWidth: 0.5,
+              shadowSize: 0,
+              fillOpacity: 1,
+              lineWidth: 0,
+          },
+          yaxis: {
+              max:0.4,
+              min: 0.001,
+              tickDecimals: 5,
+          },
+          xaxis: {
+              ticks: years,
+          },
+          grid: {
+              horizontalLines: false,
+              verticalLines: false,
+          }
+      });
+    });//forEachここまで
+
+    //loadavg.text(data.loadavg.join(' : '));
+
+  });
+  socket.on('connect', () => {
+    console.log('WebSocketによるプッシュ通信接続');
+  });
+  socket.on('disconnect', () => {
+    console.log('このコメントのあとは、エラーがでる！？');
+  });
+//  });
+  
+
+
+
