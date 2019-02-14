@@ -124,11 +124,16 @@ var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_1___default()('http://loc
 socket.on('server-status', function (data) {
   loadavg.text(data.loadavg.toString());
 });
+var connection = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#connection');
 socket.on('connect', function () {
   console.log('接続しました');
+  connection.text('接続しました');
+  connection.css("color", "green");
 });
 socket.on('disconnect', function () {
   console.log('切断しました');
+  connection.text('切断しました');
+  connection.css("color", "red");
 });
 
 /***/ }),
