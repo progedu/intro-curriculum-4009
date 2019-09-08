@@ -22,3 +22,8 @@ const socket = io('http://localhost:8000');
 socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.toString());
 });
+
+// Socketオブジェクトに対して、connet の文字列で定義される(接続)イベントを監視
+socket.on('connect',() => { console.log('接続しました'); });
+// 切断イベントの監視
+socket.on('disconnect',() => { console.log('切断しました'); });
