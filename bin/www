@@ -98,5 +98,6 @@ function emitServerStatus(socket) {
 }
 
 io.on('connection', function (socket) {
+  console.log('接続しました。');
   setInterval(emitServerStatus, 10, socket);
 });
