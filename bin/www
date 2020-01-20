@@ -98,5 +98,5 @@ function emitServerStatus(socket) {
 }
 
 io.on('connection', function (socket) {
-  setInterval(emitServerStatus, 10, socket);
+  setInterval(emitServerStatus, 250, socket);
 });
