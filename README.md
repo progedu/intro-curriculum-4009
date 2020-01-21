@@ -4,8 +4,11 @@
 #### デモURL:[https://agile-thicket-48043.herokuapp.com/](https://agile-thicket-48043.herokuapp.com/)
 ### 使用方法
 ```bash
-vagrant@ubuntu-bionic:~/workspace/intro-curriculum-4009$git checkout master-2019
-vagrant@ubuntu-bionic:~/workspace/intro-curriculum-4009$yarn install
+cd ~/workspace
+git clone `${自身のURL}`
+cd ~/workspace/intro-curriculum-4009
+git checkout master-2019
+yarn install
 ```
 
 ### ちょこっとメモ  
