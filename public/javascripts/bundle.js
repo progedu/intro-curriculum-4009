@@ -110,6 +110,7 @@ var ctx = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#myChart');
 var dos = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dos');
 var n = 1;
 var times = [0, 0, 0, 0, 0, 0, 0, 0];
+var userID;
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
@@ -170,6 +171,7 @@ movingButton.click(function () {
   }, 1000);
 });
 var loadavg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#loadavg');
+var numOfPeople = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#numOfPeople');
  //const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
 
 var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default()('http://localhost:8000'); //bin/wwwで設定した関数を使う
@@ -195,8 +197,13 @@ socket.on('server-status', function (data) {
   myLineChart.update();
   loadavg.text(data.loadavg.join(' : '));
 });
-socket.on('connect', function () {
+socket.on('member-of-people', function (data) {
+  console.log('人' + data);
+  numOfPeople.text(data);
+});
+socket.on('connect', function (data) {
   console.log('接続しました');
+  console.log(data);
 });
 socket.on('disconnect', function () {
   console.log('切断しました');
@@ -211,10 +218,10 @@ document.body.appendChild(app.view); //load an image and run the `setup` functio
 
 var leninTexture = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Texture"].from('images/lenin.png'); // 読み込んだテクスチャから、スプライトを生成する
 
-var leninSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Sprite"](leninTexture); // ぶたの基準点を設定(%) 0.5はそれぞれの中心 位置・回転の基準になる
+var leninSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Sprite"](leninTexture); // の基準点を設定(%) 0.5はそれぞれの中心 位置・回転の基準になる
 
 leninSprite.anchor.x = 0.5;
-leninSprite.anchor.y = 0.5; // ぶたの位置決め
+leninSprite.anchor.y = 0.5; // の位置決め
 
 leninSprite.x = app.screen.width / 2; // ビューの幅 / 2 = x中央
 
@@ -229,14 +236,14 @@ ellipse.pivot.y = 10;
 ellipse.x = 100;
 ellipse.y = 100;
 ellipse.rotation = Math.PI / 6;
-app.stage.addChild(ellipse); // 中央のぶたのインタラクション(イベント)を有効化
+app.stage.addChild(ellipse); // 中央ののインタラクション(イベント)を有効化
 
-ellipse.interactive = true; // ぶたにマウスが重なった時、表示をポインターにする
+ellipse.interactive = true; // にマウスが重なった時、表示をポインターにする
 
-ellipse.buttonMode = true; // 中央のぶたスプライトにクリックイベントのリスナーを設定する
+ellipse.buttonMode = true; // 中央のスプライトにクリックイベントのリスナーを設定する
 // オブジェクト.on('イベントの種類', イベントハンドラ) で設定する
 
-ellipse.on('pointerdown', onButaPointerDown); // ぶたの上でマウスがクリック(orタップ)されたとき
+ellipse.on('pointerdown', onButaPointerDown); // の上でマウスがクリック(orタップ)されたとき
 
 function onButaPointerDown() {
   ellipse.on('pointermove', moveEllipse);
@@ -246,8 +253,13 @@ function moveEllipse(e) {
   var position = e.data.getLocalPosition(app.stage); // 位置変更
 
   ellipse.x = position.x;
-  ellipse.y = position.y;
+  ellipse.y = position.y; //socket.volatile.emit('move-post',{});
 }
+
+socket.on('member-of-people', function (data) {
+  console.log('人' + data);
+  numOfPeople.text(data);
+});
 
 /***/ }),
 /* 1 */

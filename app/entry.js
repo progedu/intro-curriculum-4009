@@ -11,6 +11,7 @@ var ctx = $('#myChart');
 var dos = $('#dos');
 let n = 1;
 let times = [0, 0, 0, 0, 0, 0, 0, 0];
+let userID;
 
 var myLineChart = new Chart(ctx, {
   type: 'line',
@@ -70,7 +71,7 @@ movingButton.click(() => {
 });
 
 const loadavg = $('#loadavg');
-
+const numOfPeople = $('#numOfPeople');
 
 import io from 'socket.io-client';
 
@@ -104,8 +105,21 @@ socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.join(' : '));
 });
 
-socket.on('connect', () => { console.log('接続しました'); });
-socket.on('disconnect', () => { console.log('切断しました'); });
+socket.on('member-of-people', (data) =>{
+  console.log('人'+data);
+  numOfPeople.text(data);
+});
+
+socket.on('connect', (data) => {
+   console.log('接続しました');
+   console.log(data); 
+   
+});
+socket.on('disconnect', () => { 
+  console.log('切断しました');
+  
+});
+
 
 // Pixiアプリケーション生成
 let app = new PIXI.Application({
@@ -120,10 +134,10 @@ document.body.appendChild(app.view);
 let leninTexture = new PIXI.Texture.from('images/lenin.png');
 // 読み込んだテクスチャから、スプライトを生成する
 let leninSprite = new PIXI.Sprite(leninTexture);
-// ぶたの基準点を設定(%) 0.5はそれぞれの中心 位置・回転の基準になる
+// の基準点を設定(%) 0.5はそれぞれの中心 位置・回転の基準になる
 leninSprite.anchor.x = 0.5;
 leninSprite.anchor.y = 0.5;
-// ぶたの位置決め
+// の位置決め
 leninSprite.x = app.screen.width / 2;        // ビューの幅 / 2 = x中央
 leninSprite.y = app.screen.height / 2;       // ビューの高さ / 2 = y中央
 // 表示領域に追加する
@@ -142,16 +156,16 @@ ellipse.y = 100;
 ellipse.rotation = Math.PI / 6;
 app.stage.addChild(ellipse);
 
-// 中央のぶたのインタラクション(イベント)を有効化
+// 中央ののインタラクション(イベント)を有効化
 ellipse.interactive = true;
 
-// ぶたにマウスが重なった時、表示をポインターにする
+// にマウスが重なった時、表示をポインターにする
 ellipse.buttonMode = true;
 
-// 中央のぶたスプライトにクリックイベントのリスナーを設定する
+// 中央のスプライトにクリックイベントのリスナーを設定する
 // オブジェクト.on('イベントの種類', イベントハンドラ) で設定する
 
-ellipse.on('pointerdown',  onButaPointerDown);    // ぶたの上でマウスがクリック(orタップ)されたとき
+ellipse.on('pointerdown',  onButaPointerDown);    // の上でマウスがクリック(orタップ)されたとき
 
 function onButaPointerDown() {
 ellipse.on('pointermove',moveEllipse);
@@ -163,4 +177,10 @@ function moveEllipse(e){
       // 位置変更
       ellipse.x = position.x;
       ellipse.y = position.y;
+      //socket.volatile.emit('move-post',{});
 }
+
+socket.on('member-of-people', (data) =>{
+  console.log('人'+data);
+  numOfPeople.text(data);
+});

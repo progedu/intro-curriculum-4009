@@ -8,6 +8,8 @@ var app = require('../app');
 var debug = require('debug')('websocket-study:server');
 var http = require('http');
 
+var userData = new Map();
+
 /**
  * Get port from environment and store in Express.
  */
@@ -93,10 +95,18 @@ var io = require('socket.io')(server);
 var os = require('os');
 
 function emitServerStatus(socket) {
-  socket.emit('server-status', { loadavg: os.loadavg() });
-  console.log('server-status event emitted.');
+  //UDPにして軽くする
+  socket.volatile.emit('server-status', { loadavg: os.loadavg() });
+  //console.log('server-status event emitted.');
 }
 
 io.on('connection', function (socket) {
   setInterval(emitServerStatus, 250, socket);
+  io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
+  console.log(socket.nsp.server.eio.clientsCount);
 });
+
+io.on('disconnection', function (socket) {
+  io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
+});
+
