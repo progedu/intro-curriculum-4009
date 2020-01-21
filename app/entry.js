@@ -11,7 +11,6 @@ var ctx = $('#myChart');
 var dos = $('#dos');
 let n = 1;
 let times = [0, 0, 0, 0, 0, 0, 0, 0];
-var userData = new Map();
 
 var myLineChart = new Chart(ctx, {
   type: 'line',
