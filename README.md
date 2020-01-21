@@ -2,6 +2,7 @@
 ## 現在の時刻から1.5秒前のサーバの負荷を調べることができます  
 ![demo](https://github.com/SasuraiNoHoge/intro-curriculum-4009/blob/master-2019/output.gif)  
 #### デモURL:[https://agile-thicket-48043.herokuapp.com/](https://agile-thicket-48043.herokuapp.com/)
+#### pixi.js追加:[https://glacial-chamber-97776.herokuapp.com/](https://glacial-chamber-97776.herokuapp.com/)
 ### 使用方法
 ```bash
 cd ~/workspace
