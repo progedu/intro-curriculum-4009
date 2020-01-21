@@ -3,6 +3,10 @@ import $ from 'jquery';
 const block = $('#block');
 const scalingButton = $('#scaling-button');
 var Chart = require('chart.js');
+//var PIXIMIN=require('../public/javascripts/pixi.min.js');
+import * as PIXI from 'pixi.js';
+//const PIXIMIN = require('../node_modules/pixi.js/dist/pixi.min.js')
+
 var ctx = $('#myChart');
 var dos = $('#dos');
 let n = 1;
@@ -70,7 +74,8 @@ const loadavg = $('#loadavg');
 
 import io from 'socket.io-client';
 
-const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
+//const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
+const socket = io('http://localhost:8000');
 
 //bin/wwwで設定した関数を使う
 //クライアントからサーバの状況を教えて貰う
@@ -101,3 +106,61 @@ socket.on('server-status', (data) => {
 
 socket.on('connect', () => { console.log('接続しました'); });
 socket.on('disconnect', () => { console.log('切断しました'); });
+
+// Pixiアプリケーション生成
+let app = new PIXI.Application({
+  backgroundColor: 0x1099bb,  // 背景色 16進 0xRRGGBB
+});
+
+document.body.appendChild(app.view);
+
+//load an image and run the `setup` function when it's done
+
+// 画像を読み込み、テクスチャにする
+let leninTexture = new PIXI.Texture.from('images/lenin.png');
+// 読み込んだテクスチャから、スプライトを生成する
+let leninSprite = new PIXI.Sprite(leninTexture);
+// ぶたの基準点を設定(%) 0.5はそれぞれの中心 位置・回転の基準になる
+leninSprite.anchor.x = 0.5;
+leninSprite.anchor.y = 0.5;
+// ぶたの位置決め
+leninSprite.x = app.screen.width / 2;        // ビューの幅 / 2 = x中央
+leninSprite.y = app.screen.height / 2;       // ビューの高さ / 2 = y中央
+// 表示領域に追加する
+app.stage.addChild(leninSprite);
+
+let ellipse = new PIXI.Graphics()
+.beginFill(0xff0000)
+.drawEllipse(0,0,30,20)
+.endFill();
+
+// 基準点を設定(px) 図形(PIXI.Graphicsにはpivotはないので注意)
+ellipse.pivot.x = 15
+ellipse.pivot.y = 10
+ellipse.x = 100;
+ellipse.y = 100;     
+ellipse.rotation = Math.PI / 6;
+app.stage.addChild(ellipse);
+
+// 中央のぶたのインタラクション(イベント)を有効化
+ellipse.interactive = true;
+
+// ぶたにマウスが重なった時、表示をポインターにする
+ellipse.buttonMode = true;
+
+// 中央のぶたスプライトにクリックイベントのリスナーを設定する
+// オブジェクト.on('イベントの種類', イベントハンドラ) で設定する
+
+ellipse.on('pointerdown',  onButaPointerDown);    // ぶたの上でマウスがクリック(orタップ)されたとき
+
+function onButaPointerDown() {
+ellipse.on('pointermove',moveEllipse);
+}
+
+function moveEllipse(e){
+  let position = e.data.getLocalPosition(app.stage);
+
+      // 位置変更
+      ellipse.x = position.x;
+      ellipse.y = position.y;
+}

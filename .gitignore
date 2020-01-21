@@ -1,2 +1,4 @@
 node_modules/
 *.log
+public/javascripts/pixi.min.js
+yarn.lock
