@@ -110,7 +110,7 @@ var ctx = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#myChart');
 var dos = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dos');
 var n = 1;
 var times = [0, 0, 0, 0, 0, 0, 0, 0];
-var userID;
+var userData = new Map();
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {

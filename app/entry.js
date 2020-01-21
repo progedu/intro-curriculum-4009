@@ -11,7 +11,7 @@ var ctx = $('#myChart');
 var dos = $('#dos');
 let n = 1;
 let times = [0, 0, 0, 0, 0, 0, 0, 0];
-let userID;
+var userData = new Map();
 
 var myLineChart = new Chart(ctx, {
   type: 'line',
@@ -75,8 +75,8 @@ const numOfPeople = $('#numOfPeople');
 
 import io from 'socket.io-client';
 
-//const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
-const socket = io('http://localhost:8000');
+const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
+//const socket = io('http://localhost:8000');
 
 //bin/wwwで設定した関数を使う
 //クライアントからサーバの状況を教えて貰う
@@ -105,15 +105,11 @@ socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.join(' : '));
 });
 
-socket.on('member-of-people', (data) =>{
-  console.log('人'+data);
-  numOfPeople.text(data);
-});
 
 socket.on('connect', (data) => {
    console.log('接続しました');
    console.log(data); 
-   
+
 });
 socket.on('disconnect', () => { 
   console.log('切断しました');
@@ -183,4 +179,9 @@ function moveEllipse(e){
 socket.on('member-of-people', (data) =>{
   console.log('人'+data);
   numOfPeople.text(data);
+});
+
+
+socket.on('move_broadcast', (data) => {
+  
 });
