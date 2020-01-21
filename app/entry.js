@@ -70,7 +70,7 @@ const loadavg = $('#loadavg');
 
 import io from 'socket.io-client';
 
-const socket = io(process.env.HEROKU_URL || 'http://localhost:8000');
+const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
 
 //bin/wwwで設定した関数を使う
 //クライアントからサーバの状況を教えて貰う
