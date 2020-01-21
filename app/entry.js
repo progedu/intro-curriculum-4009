@@ -175,13 +175,3 @@ function moveEllipse(e){
       ellipse.y = position.y;
       //socket.volatile.emit('move-post',{});
 }
-
-socket.on('member-of-people', (data) =>{
-  console.log('人'+data);
-  numOfPeople.text(data);
-});
-
-
-socket.on('move_broadcast', (data) => {
-  
-});
