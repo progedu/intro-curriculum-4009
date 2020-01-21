@@ -11,6 +11,7 @@ var ctx = $('#myChart');
 var dos = $('#dos');
 let n = 1;
 let times = [0, 0, 0, 0, 0, 0, 0, 0];
+var userData = new Map();
 
 var myLineChart = new Chart(ctx, {
   type: 'line',
@@ -74,7 +75,7 @@ const numOfPeople = $('#numOfPeople');
 
 import io from 'socket.io-client';
 
-//const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
+const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
 const socket = io('https://glacial-chamber-97776.herokuapp.com/' || 'http://localhost:8000');
 
 //bin/wwwで設定した関数を使う
@@ -174,3 +175,12 @@ function moveEllipse(e){
       ellipse.y = position.y;
       //socket.volatile.emit('move-post',{});
 }
+
+//socket.on('member-of-people', (data) =>{
+  //console.log('人'+data);
+  //numOfPeople.text(data);
+//});
+
+
+//socket.on('move_broadcast', (data) => {
+//});
