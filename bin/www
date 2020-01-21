@@ -100,12 +100,12 @@ function emitServerStatus(socket) {
 
 io.on('connection', function (socket) {
   setInterval(emitServerStatus, 250, socket);
-  io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
+  //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
   console.log(socket.nsp.server.eio.clientsCount);
 });
 
 io.on('disconnection', function (socket) {
-  io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
+  //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
 });
 
 io.on('move_post', function (socket) 

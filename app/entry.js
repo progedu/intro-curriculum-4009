@@ -75,8 +75,8 @@ const numOfPeople = $('#numOfPeople');
 
 import io from 'socket.io-client';
 
-const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
-//const socket = io('http://localhost:8000');
+//const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
+const socket = io('https://glacial-chamber-97776.herokuapp.com/' || 'http://localhost:8000');
 
 //bin/wwwで設定した関数を使う
 //クライアントからサーバの状況を教えて貰う
