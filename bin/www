@@ -99,7 +99,7 @@ function emitServerStatus(socket) {
 }
 
 io.on('connection', function (socket) {
-  setInterval(emitServerStatus, 250, socket);
+  //setInterval(emitServerStatus, 250, socket);
   //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
   //console.log(socket.nsp.server.eio.clientsCount);
 });
