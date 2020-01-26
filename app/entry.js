@@ -177,7 +177,7 @@ function moveEllipse(e){
 }
 
 socket.on('member-of-people', (data) =>{
-  console.log('人'+data);
+  //console.log('人'+data);
   numOfPeople.text(data);
 });
 
