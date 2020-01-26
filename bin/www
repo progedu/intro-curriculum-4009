@@ -99,14 +99,20 @@ function emitServerStatus(socket) {
 }
 
 io.on('connection', function (socket) {
+  var data;
   setInterval(emitServerStatus, 250, socket);
+  socket.client.conn.server.clientsCount ? data = socket.client.conn.server.clientsCount : data = socket.nsp.server.eio.clientsCount;
+  io.emit('member-of-people',data);
   //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
   //console.log(socket.nsp.server.eio.clientsCount);
 });
 
-//io.on('disconnection', function (socket) {
+io.on('disconnection', function (socket) {
+  socket.client.conn.server.clientsCount ? data = socket.client.conn.server.clientsCount : data = socket.nsp.server.eio.clientsCount;
+  io.emit('member-of-people',data);
   //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
-//});
+});
 
 io.on('move_post', function (data) {
-io.emit('move_broadcast', data);});
+  io.emit('move_broadcast', data);
+});

@@ -174,7 +174,7 @@ var loadavg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#loadavg');
 var numOfPeople = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#numOfPeople');
  //const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
 
-var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default()('https://glacial-chamber-97776.herokuapp.com/'); //bin/wwwで設定した関数を使う
+var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default()('http://localhost:8000' || false); //bin/wwwで設定した関数を使う
 //クライアントからサーバの状況を教えて貰う
 //サーバはintervalで時間ごとに値を更新してるのでこちらで呼び出す必要はない
 
@@ -250,11 +250,12 @@ function moveEllipse(e) {
 
   ellipse.x = position.x;
   ellipse.y = position.y; //socket.volatile.emit('move-post',{});
-} //socket.on('member-of-people', (data) =>{
-//console.log('人'+data);
-//numOfPeople.text(data);
-//});
-//socket.on('move_broadcast', (data) => {
+}
+
+socket.on('member-of-people', function (data) {
+  console.log('人' + data);
+  numOfPeople.text(data);
+}); //socket.on('move_broadcast', (data) => {
 //});
 
 /***/ }),
