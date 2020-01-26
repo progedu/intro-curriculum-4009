@@ -103,7 +103,6 @@ io.on('connection', function (socket) {
   setInterval(emitServerStatus, 250, socket);
   socket.client.conn.server.clientsCount ? data = socket.client.conn.server.clientsCount : data = socket.nsp.server.eio.clientsCount;
   console.info(`データ:${data}`);
-  data = 1;
   io.emit('member-of-people',data);
   //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
   //console.log(socket.nsp.server.eio.clientsCount);
