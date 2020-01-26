@@ -164,7 +164,7 @@ ellipse.buttonMode = true;
 ellipse.on('pointerdown',  onButaPointerDown);    // の上でマウスがクリック(orタップ)されたとき
 
 function onButaPointerDown() {
-ellipse.on('pointermove',moveEllipse);
+  ellipse.on('pointermove',moveEllipse);
 }
 
 function moveEllipse(e){
