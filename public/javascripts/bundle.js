@@ -110,7 +110,9 @@ var ctx = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#myChart');
 var dos = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#dos');
 var n = 1;
 var times = [0, 0, 0, 0, 0, 0, 0, 0];
-var userData = new Map();
+var userNum = 1;
+var ellipses = [];
+var vertex = [0, 0];
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
@@ -151,6 +153,19 @@ var myLineChart = new Chart(ctx, {
     }
   }
 });
+
+function createelipse(x, y, user) {
+  var ellipse = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Graphics"]().beginFill(0xff0000).drawEllipse(0, 0, 30, 20).endFill();
+  ellipse.pivot.x = 15;
+  ellipse.pivot.y = 10;
+  ellipse.x = x;
+  ellipse.y = y;
+  ellipse.rotation = Math.PI / 6;
+  app.stage.addChild(ellipse);
+  if (ellipses.length < user) ellipses.push(ellipse);
+  console.log(ellipses);
+}
+
 scalingButton.click(function () {
   block.animate({
     width: '200pt',
@@ -174,7 +189,7 @@ var loadavg = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#loadavg');
 var numOfPeople = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#numOfPeople');
  //const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
 
-var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default()('https://glacial-chamber-97776.herokuapp.com/'); //bin/wwwで設定した関数を使う
+var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default()('http://localhost:8000'); //bin/wwwで設定した関数を使う
 //クライアントからサーバの状況を教えて貰う
 //サーバはintervalで時間ごとに値を更新してるのでこちらで呼び出す必要はない
 
@@ -200,6 +215,8 @@ socket.on('server-status', function (data) {
 socket.on('connect', function (data) {
   console.log('接続しました');
   console.log(data);
+  ellipse.x = Math.random() * app.screen.width;
+  ellipse.y = Math.random() * app.screen.height;
 });
 socket.on('disconnect', function () {
   console.log('切断しました');
@@ -209,28 +226,13 @@ var app = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Application"]({
   backgroundColor: 0x1099bb // 背景色 16進 0xRRGGBB
 
 });
-document.body.appendChild(app.view); //load an image and run the `setup` function when it's done
-// 画像を読み込み、テクスチャにする
-
-var leninTexture = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Texture"].from('images/lenin.png'); // 読み込んだテクスチャから、スプライトを生成する
-
-var leninSprite = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Sprite"](leninTexture); // の基準点を設定(%) 0.5はそれぞれの中心 位置・回転の基準になる
-
-leninSprite.anchor.x = 0.5;
-leninSprite.anchor.y = 0.5; // の位置決め
-
-leninSprite.x = app.screen.width / 2; // ビューの幅 / 2 = x中央
-
-leninSprite.y = app.screen.height / 2; // ビューの高さ / 2 = y中央
-// 表示領域に追加する
-
-app.stage.addChild(leninSprite);
+document.body.appendChild(app.view);
 var ellipse = new pixi_js__WEBPACK_IMPORTED_MODULE_1__["Graphics"]().beginFill(0xff0000).drawEllipse(0, 0, 30, 20).endFill(); // 基準点を設定(px) 図形(PIXI.Graphicsにはpivotはないので注意)
 
 ellipse.pivot.x = 15;
 ellipse.pivot.y = 10;
-ellipse.x = 100;
-ellipse.y = 100;
+ellipse.x = Math.random() * app.screen.width;
+ellipse.y = Math.random() * app.screen.height;
 ellipse.rotation = Math.PI / 6;
 app.stage.addChild(ellipse); // 中央ののインタラクション(イベント)を有効化
 
@@ -249,14 +251,19 @@ function moveEllipse(e) {
   var position = e.data.getLocalPosition(app.stage); // 位置変更
 
   ellipse.x = position.x;
-  ellipse.y = position.y; //socket.volatile.emit('move-post',{});
+  ellipse.y = position.y;
+  vertex = [position.x, position.y];
 }
 
 socket.on('member-of-people', function (data) {
-  //console.log('人'+data);
+  console.log('人' + data);
+  ellipse.scale.x = parseInt(data);
+  ellipse.scale.y = parseInt(data);
   numOfPeople.text(data);
-}); //socket.on('move_broadcast', (data) => {
-//});
+});
+socket.on("start data", function (plyaerId) {
+  var userId = plyaerId;
+});
 
 /***/ }),
 /* 1 */

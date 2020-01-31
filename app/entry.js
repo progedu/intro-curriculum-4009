@@ -11,7 +11,9 @@ var ctx = $('#myChart');
 var dos = $('#dos');
 let n = 1;
 let times = [0, 0, 0, 0, 0, 0, 0, 0];
-var userData = new Map();
+var userNum = 1;
+let ellipses =[];
+let vertex = [0,0];
 
 var myLineChart = new Chart(ctx, {
   type: 'line',
@@ -58,6 +60,23 @@ var myLineChart = new Chart(ctx, {
   }
 });
 
+function createelipse(x,y,user){
+  let ellipse = new PIXI.Graphics()
+  .beginFill(0xff0000)
+  .drawEllipse(0,0,30,20)
+  .endFill();
+
+  ellipse.pivot.x = 15;
+  ellipse.pivot.y = 10;
+  ellipse.x = x;
+  ellipse.y = y;
+  ellipse.rotation = Math.PI / 6;
+  app.stage.addChild(ellipse);
+  if(ellipses.length < user)
+    ellipses.push(ellipse);
+  console.log(ellipses);
+}
+
 scalingButton.click(() => {
   block.animate({ width: '200pt', height: '200pt' }, 2000);
   block.animate({ width: '100pt', height: '100pt' }, 2000);
@@ -76,7 +95,7 @@ const numOfPeople = $('#numOfPeople');
 import io from 'socket.io-client';
 
 //const socket = io('https://agile-thicket-48043.herokuapp.com/' || 'http://localhost:8000');
-const socket = io('https://glacial-chamber-97776.herokuapp.com/');
+const socket = io('http://localhost:8000');
 
 //bin/wwwで設定した関数を使う
 //クライアントからサーバの状況を教えて貰う
@@ -107,8 +126,10 @@ socket.on('server-status', (data) => {
 
 
 socket.on('connect', (data) => {
-   console.log('接続しました');
-   console.log(data); 
+  console.log('接続しました');
+  console.log(data);
+  ellipse.x = Math.random() * app.screen.width;
+  ellipse.y = Math.random() * app.screen.height;
 
 });
 socket.on('disconnect', () => { 
@@ -124,21 +145,6 @@ let app = new PIXI.Application({
 
 document.body.appendChild(app.view);
 
-//load an image and run the `setup` function when it's done
-
-// 画像を読み込み、テクスチャにする
-let leninTexture = new PIXI.Texture.from('images/lenin.png');
-// 読み込んだテクスチャから、スプライトを生成する
-let leninSprite = new PIXI.Sprite(leninTexture);
-// の基準点を設定(%) 0.5はそれぞれの中心 位置・回転の基準になる
-leninSprite.anchor.x = 0.5;
-leninSprite.anchor.y = 0.5;
-// の位置決め
-leninSprite.x = app.screen.width / 2;        // ビューの幅 / 2 = x中央
-leninSprite.y = app.screen.height / 2;       // ビューの高さ / 2 = y中央
-// 表示領域に追加する
-app.stage.addChild(leninSprite);
-
 let ellipse = new PIXI.Graphics()
 .beginFill(0xff0000)
 .drawEllipse(0,0,30,20)
@@ -147,8 +153,8 @@ let ellipse = new PIXI.Graphics()
 // 基準点を設定(px) 図形(PIXI.Graphicsにはpivotはないので注意)
 ellipse.pivot.x = 15
 ellipse.pivot.y = 10
-ellipse.x = 100;
-ellipse.y = 100;     
+ellipse.x = Math.random() * app.screen.width;
+ellipse.y = Math.random() * app.screen.height;
 ellipse.rotation = Math.PI / 6;
 app.stage.addChild(ellipse);
 
@@ -173,14 +179,17 @@ function moveEllipse(e){
       // 位置変更
       ellipse.x = position.x;
       ellipse.y = position.y;
-      //socket.volatile.emit('move-post',{});
+      vertex = [position.x,position.y];
 }
 
 socket.on('member-of-people', (data) =>{
-  //console.log('人'+data);
+  console.log('人'+data);
+  ellipse.scale.x = parseInt(data);
+  ellipse.scale.y = parseInt(data);
+
   numOfPeople.text(data);
 });
 
-
-//socket.on('move_broadcast', (data) => {
-//});
+socket.on(`start data`, (plyaerId) => {
+  const userId = plyaerId;
+});

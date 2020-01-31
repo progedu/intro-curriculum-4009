@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('websocket-study:server');
 var http = require('http');
+const crypto = require('crypto');
 
 /**
  * Get port from environment and store in Express.
@@ -95,25 +96,20 @@ var os = require('os');
 function emitServerStatus(socket) {
   //UDPにして軽くする
   socket.volatile.emit('server-status', { loadavg: os.loadavg() });
-  //console.log('server-status event emitted.');
 }
 
 io.on('connection', function (socket) {
   var data;
   setInterval(emitServerStatus, 250, socket);
   socket.client.conn.server.clientsCount ? data = socket.client.conn.server.clientsCount : data = socket.nsp.server.eio.clientsCount;
-  //console.info(`データ:${data}`);
   io.emit('member-of-people',data);
-  //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
-  //console.log(socket.nsp.server.eio.clientsCount);
-});
-
-io.on('disconnection', function (socket) {
-  socket.client.conn.server.clientsCount ? data = socket.client.conn.server.clientsCount : data = socket.nsp.server.eio.clientsCount;
-  io.emit('member-of-people',data);
-  //io.emit('member-of-people',socket.nsp.server.eio.clientsCount);
-});
-
-io.on('move_post', function (data) {
-  io.emit('move_broadcast', data);
+  const playerId = crypto.createHash('sha1').update(socket.id).digest('hex');
+  socket.emit(`start data`,playerId);
+  
+  // クライアントが切断したら
+  socket.on('disconnect', () => {
+    var data;
+    socket.client.conn.server.clientsCount ? data = socket.client.conn.server.clientsCount : data = socket.nsp.server.eio.clientsCount;
+    io.emit('member-of-people',data);
+  });
 });
