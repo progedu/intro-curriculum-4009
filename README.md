@@ -1,8 +1,7 @@
-# [授業](https://www.nnn.ed.nico/courses/497/chapters/9499)で学んだマークダウン記法をブッパするのぜ！
-## 現在の時刻から1.5秒前のサーバの負荷を調べることができます  
+# 現在の時刻から1.5秒前のサーバの負荷を調べることができます  
 ![demo](https://github.com/SasuraiNoHoge/intro-curriculum-4009/blob/master-2019/output.gif)  
-#### デモURL:[https://agile-thicket-48043.herokuapp.com/](https://agile-thicket-48043.herokuapp.com/)
-#### pixi.js追加:[https://glacial-chamber-97776.herokuapp.com/](https://glacial-chamber-97776.herokuapp.com/)
+#### デモURL:[https://glacial-chamber-97776.herokuapp.com/](https://glacial-chamber-97776.herokuapp.com/)
+## またアクセス数に応じて楕円のサイズが変動します
 ### 使用方法
 ```bash
 cd ~/workspace
