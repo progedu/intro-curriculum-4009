@@ -92,9 +92,11 @@ function onListening() {
 var io = require('socket.io')(server);
 var os = require('os');
 
+let i = 0;
 function emitServerStatus(socket) {
   socket.emit('server-status', { loadavg: os.loadavg() });
-  console.log('server-status event emitted.');
+  console.log('server-status event emitted.' + i);
+  i++;
 }
 
 io.on('connection', function (socket) {
