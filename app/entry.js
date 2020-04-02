@@ -1,5 +1,5 @@
 'use strict';
-const $ = require('jquery');
+import $ from 'jquery';
 const block = $('#block');
 const scalingButton = $('#scaling-button');
 
@@ -17,12 +17,13 @@ movingButton.click(() => {
 
 const loadavg = $('#loadavg');
 
-const socket = require('socket.io-client')('http://localhost:8000');
+import io from 'socket.io-client';
+const socket = io('http://localhost:8000');
 socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.toString());
 });
 
-socket.on('connect', ()=> {
+socket.on('connect', () => {
   console.log('接続しました。');
 });
 
