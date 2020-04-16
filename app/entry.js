@@ -25,6 +25,6 @@ socket.on('server-status', (data) => {
 socket.on('connect', () => {
   console.log("接続しました");
 });
-socket.on('connect', () => {
+socket.on('disconnect', () => {
   console.log("切断しました");
 });
