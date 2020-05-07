@@ -1,3 +1,4 @@
+// WebSocket の接続時と切断時に、クライアントの Chrome のデベロッパーツールの Console に 「接続しました」と「切断しました」という文字列をそれぞれ表示
 'use strict';
 import $ from 'jquery';
 const block = $('#block');
@@ -22,3 +23,8 @@ const socket = io('http://localhost:8000');
 socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.toString());
 });
+
+// Socket オブジェクトに対して、 connect の文字列で定義されるイベントを 監視することで、接続イベントが監視できます。
+// また、 disconnect の文字列で定義されるイベントを監視することで、 切断のイベントを監視することができます。
+socket.on('connect', () => { console.log('接続しました'); });
+socket.on('disconnect', () => { console.log('切断しました'); });
