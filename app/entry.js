@@ -22,3 +22,13 @@ const socket = io('http://localhost:8000');
 socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.toString());
 });
+
+socket.on('connect', () => {
+  console.log('サーバーとの接続が確立されました。');
+  alert('サーバーとの接続が確立されました。');
+});
+
+socket.on('disconnect', () => {
+  console.log('サーバーとの接続が切断されました。');
+  alert('サーバーとの接続が切断されました。');
+});
