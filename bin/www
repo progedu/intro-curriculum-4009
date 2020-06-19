@@ -100,3 +100,7 @@ function emitServerStatus(socket) {
 io.on('connection', function (socket) {
   setInterval(emitServerStatus, 10, socket);
 });
+
+socket.on('connect', () => {console.log('接続しました')});
+socket.on('disconnect', () => {console.log('接続しました')});
+
