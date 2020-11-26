@@ -19,6 +19,7 @@ const loadavg = $('#loadavg');
 
 import io from 'socket.io-client';
 const socket = io('http://localhost:8000');
-socket.on('server-status', (data) => {
-  loadavg.text(data.loadavg.toString());
-});
+socket
+  .on('connect', () => console.info('接続しました'))
+  .on('disconnect', () => console.info('切断しました'))
+  .on('server-status', data => loadavg.text(data.loadavg.toString()));
