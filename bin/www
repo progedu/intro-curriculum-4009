@@ -94,9 +94,10 @@ var os = require('os');
 
 function emitServerStatus(socket) {
   socket.emit('server-status', { loadavg: os.loadavg() });
+  socket.emit('programming-study', {hostname: os.hostname() });
   console.log('server-status event emitted.');
 }
 
 io.on('connection', function (socket) {
-  setInterval(emitServerStatus, 10, socket);
+  setInterval(emitServerStatus, 5000, socket);
 });
