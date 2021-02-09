@@ -22,3 +22,7 @@ const socket = io('http://localhost:8000');
 socket.on('server-count', (data) => {
     loadavg.text(`サーバが起動してから ${data.count / 1000} 秒経過しました。`);
 });
+
+
+socket.on('connect', () => { console.log('接続しました'); });
+socket.on('disconnect', () => { console.log('切断しました'); });

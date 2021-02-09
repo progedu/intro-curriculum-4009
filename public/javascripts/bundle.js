@@ -124,6 +124,12 @@ var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_1___default()('http://loc
 socket.on('server-count', function (data) {
   loadavg.text("\u30B5\u30FC\u30D0\u304C\u8D77\u52D5\u3057\u3066\u304B\u3089 ".concat(data.count / 1000, " \u79D2\u7D4C\u904E\u3057\u307E\u3057\u305F\u3002"));
 });
+socket.on('connect', function () {
+  console.log('接続しました');
+});
+socket.on('disconnect', function () {
+  console.log('切断しました');
+});
 
 /***/ }),
 /* 1 */
