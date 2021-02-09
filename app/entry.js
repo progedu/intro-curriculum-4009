@@ -19,6 +19,6 @@ const loadavg = $('#loadavg');
 
 import io from 'socket.io-client';
 const socket = io('http://localhost:8000');
-socket.on('server-status', (data) => {
-  loadavg.text(data.loadavg.toString());
+socket.on('server-count', (data) => {
+    loadavg.text(`サーバが起動してから ${data.count / 1000} 秒経過しました。`);
 });
