@@ -24,7 +24,9 @@ socket.on('server-status', (data) => {
 })
 .on('connect', () => {
   console.log('接続しました');
+  loadavg.text('接続しました');
 })
 .on('disconnect', () => {
   console.log('切断しました');
+  loadavg.text('切断しました');
 });

@@ -125,8 +125,10 @@ socket.on('server-status', function (data) {
   loadavg.text(data.loadavg.toString());
 }).on('connect', function () {
   console.log('接続しました');
+  loadavg.text('接続しました');
 }).on('disconnect', function () {
   console.log('切断しました');
+  loadavg.text('切断しました');
 });
 
 /***/ }),
