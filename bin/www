@@ -89,6 +89,7 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
+// websocket
 var io = require('socket.io')(server);
 var os = require('os');
 
