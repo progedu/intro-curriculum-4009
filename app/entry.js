@@ -17,8 +17,11 @@ movingButton.click(() => {
 
 const loadavg = $('#loadavg');
 
-import io from 'socket.io-client';
+import io from 'socket.io-client';// WebSocketのioオブジェクトをsocket.io-clientモジュールから読み込む
 const socket = io('http://localhost:8000');
 socket.on('server-status', (data) => {
   loadavg.text(data.loadavg.toString());
 });
+
+socket.on('connect', () => { console.log('接続しました');} );//
+socket.on('disconnect', () => { console.log('切断しました'); });//
